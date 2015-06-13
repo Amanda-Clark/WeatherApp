@@ -196,13 +196,23 @@ class CurrWthr(object):
         self.visibility = args[4]
         self.precip = args[5]
         self.code = args[6]
+        self.time = args[7]
 
+loc = input("Enter location: ")
+days = input("Enter number of days for forecast: ")
+key = "7027bb81e4ded894671ebc09b8a9a"
+
+def calc_data(days, numOfHours):
+    for x in range(0,numOfHours):
+        temp.append(r.json()['data']['weather'][0]['hourly'][x]['tempF'])
+        time.append(r.json()['data']['weather'][0]['hourly'][x]['time'])
+        weatDesc.append(r.json()['data']['weather'][0]['hourly'][x]['weatherDesc'][0]['value'])
+    return(temp, time, weatDesc)
 
 degree_sign= u'\N{DEGREE SIGN}'
 import requests
-key = "7027bb81e4ded894671ebc09b8a9a"
-loc = "Fremont, CA"
-days = "5"
+
+forecast = dict()
 r = requests.get("https://api.worldweatheronline.com/free/v2/weather.ashx?key="+key+"&q="+loc+"&num_of_days="+days+"&format=json")
 
 curTemp = r.json()['data']['current_condition'][0]['temp_F']
@@ -212,19 +222,19 @@ windDegree = r.json()['data']['current_condition'][0]['winddirDegree']
 visibility = r.json()['data']['current_condition'][0]['visibility']
 precip = r.json()['data']['current_condition'][0]['precipMM']
 code = r.json()['data']['current_condition'][0]['weatherCode']
+time = r.json()['data']['current_condition'][0]['observation_time']
 
-numOfHours = len(r.json()['data']['weather'][0]['hourly'])
 
 
-current = CurrWthr(curTemp, desc, windSpd, windDegree, visibility, precip, code)
+
+
+current = CurrWthr(curTemp, desc, windSpd, windDegree, visibility, precip, code, time)
 temp = []
 time = []
 weatDesc = []
 
-for x in range(0, numOfHours):
-    temp.append(r.json()['data']['weather'][0]['hourly'][x]['tempF'])
-    time.append(r.json()['data']['weather'][0]['hourly'][x]['time'])
-    weatDesc.append(r.json()['data']['weather'][0]['hourly'][x]['weatherDesc'][0]['value'])
+days = int(days)
+
 
 icon = icons[codes[current.code]]
 for line in icon:
@@ -233,6 +243,7 @@ for line in icon:
 
 print(loc)
 print(current.desc)
+print("Observation Time: "+ current.time+ " "+"UTC")
 print(current.curTemp+''+degree_sign+'F')
 print(current.windDegree)
 print(current.windSpd+' '+"mph")
@@ -241,14 +252,25 @@ print(current.precip+' '+'in')
 
 
 
-for hour in time:
-    print(hour, end=" ")
-print("\n")
-for degree in temp:
-    print(degree, end=" ")
-print("\n")
-for weather in weatDesc:
-    print(weather, end=" ")
+
+for y in range(0, int(days)):
+    numOfHours = len(r.json()['data']['weather'][y]['hourly'])
+    temp, time, weatDesc = calc_data(int(days), numOfHours)
+    date = r.json()['data']['weather'][y]['date']
+    print("-----------------------------------------")
+    print(loc)
+    print(date)
+    for hour in time:
+        print(hour, end=" ")
+    print("\n")
+    for degree in temp:
+        print(degree, end=" ")
+    print("\n")
+    for weather in weatDesc:
+        print(weather, end=" ")
+    print("\n")
+    print("-----------------------------------------")
+
 
 
 
