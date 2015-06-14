@@ -202,11 +202,11 @@ loc = input("Enter location: ")
 days = input("Enter number of days for forecast: ")
 key = "7027bb81e4ded894671ebc09b8a9a"
 
-def calc_data(days, numOfHours):
+def calc_data(day, numOfHours):
     for x in range(0,numOfHours):
-        temp.append(r.json()['data']['weather'][0]['hourly'][x]['tempF'])
-        time.append(r.json()['data']['weather'][0]['hourly'][x]['time'])
-        weatDesc.append(r.json()['data']['weather'][0]['hourly'][x]['weatherDesc'][0]['value'])
+        temp.append(r.json()['data']['weather'][day]['hourly'][x]['tempF'])
+        time.append(r.json()['data']['weather'][day]['hourly'][x]['time'])
+        weatDesc.append(r.json()['data']['weather'][day]['hourly'][x]['weatherDesc'][0]['value'])
     return(temp, time, weatDesc)
 
 degree_sign= u'\N{DEGREE SIGN}'
@@ -229,9 +229,7 @@ time = r.json()['data']['current_condition'][0]['observation_time']
 
 
 current = CurrWthr(curTemp, desc, windSpd, windDegree, visibility, precip, code, time)
-temp = []
-time = []
-weatDesc = []
+
 
 days = int(days)
 
@@ -254,12 +252,16 @@ print(current.precip+' '+'in')
 
 
 for y in range(0, int(days)):
+    temp = []
+    time = []
+    weatDesc = []
     numOfHours = len(r.json()['data']['weather'][y]['hourly'])
-    temp, time, weatDesc = calc_data(int(days), numOfHours)
+    temp, time, weatDesc = calc_data(y, numOfHours)
     date = r.json()['data']['weather'][y]['date']
     print("-----------------------------------------")
     print(loc)
     print(date)
+
     for hour in time:
         print(hour, end=" ")
     print("\n")
