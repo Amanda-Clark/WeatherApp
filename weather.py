@@ -23,7 +23,7 @@ def calc_data(day, numOfHours):
 
 loc = input("Enter location: ")
 days = input("Enter number of days for forecast: ")
-key = [Enter key here]
+key = [Enter Key]
 
 forecast = dict()
 r = requests.get("https://api.worldweatheronline.com/free/v2/weather.ashx?key="+key+"&q="+loc+"&num_of_days="+days+"&format=json")
