@@ -4,6 +4,7 @@ import datetime
 import time as ti
 
 from datetime import datetime as dt2
+from geopy.geocoders import Nominatim
 from rich import print
 from rich.layout import Layout
 from rich.panel import  Panel
@@ -11,7 +12,7 @@ from rich.table import Table
 from rich.text import Text
 
 degree_sign = u'\N{DEGREE SIGN}'
-key = "a"
+key = ""
 
 
 class CurrWthr(object):
@@ -147,17 +148,17 @@ def print_forecast(r, layout):
                 layout["alerts"].update(tbl)
         else:
             table = Table()
-            text = Text("Severe Weather Alerts")
-            text.stylize("red")
+            text = Text("No Severe Weather Alerts")
+            text.stylize("green")
             table.add_column(text, justify="center", no_wrap=True)
-            table.add_row("Agency: " + "", style="red")
-            table.add_row("Event: " + "", style="red")
-            table.add_row("Starts: " + "", style="red")
-            table.add_row("Ends: " + "", style="red")
-            table.add_row("Description: " + "", style="red")
+            table.add_row("Agency: " + "", style="green")
+            table.add_row("Event: " + "", style="green")
+            table.add_row("Starts: " + "", style="green")
+            table.add_row("Ends: " + "", style="green")
+            table.add_row("Description: " + "", style="green")
             table.add_row(" ")
             table.add_row(" ")
-            layout["alerts"].update(tbl)
+            layout["alerts"].update(table)
 
         if 'rain' not in day:
             totrain = "N/A"
@@ -201,10 +202,16 @@ if __name__ == "__main__":
     grid.add_column(justify="center", ratio=1)
     grid.add_column(justify="right")
     grid.add_row(
-        "Amanda's Weather App Built With Rich",
+        "Latitude: "+ lat+ " Longitude: "+lng,
         dt2.now().ctime().replace(":", "[blink]:[/]"),
     )
-    grid.add_row("Current Weather and Forecast for "+ lat +", "+ lng)
+    geolocator = Nominatim(user_agent="app")
+    Latitude = lat
+    Longitude = lng
+    location = geolocator.reverse(Latitude + "," + Longitude)
+    address = location.address
+    grid.add_row("Current Weather and Forecast for "+ address)
+    #grid.add_row(address)
     layout["header"].update(
         Panel(
             grid,
